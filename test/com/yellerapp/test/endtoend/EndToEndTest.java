@@ -20,4 +20,15 @@ public class EndToEndTest {
 		}
 		server.shouldHaveRecordedExceptionWithType("RuntimeException");
 	}
+
+	@Test
+	public void itCanReportAnExceptionWithExtraDetail () {
+		// attach: custom data
+		// attach: location
+		// attach: application-environment
+		// attach: custom time
+		// attach: custom type
+		// attach: custom message
+		System.out.println("TODO");
+	}
 }
