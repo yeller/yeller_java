@@ -31,9 +31,11 @@ you instantiate a client with it thusly:
 YellerClient yellerClient = new YellerClient('YOUR_API_KEY_HERE');
 ```
 
-There are some more configuration options, which you can read about at http://www.yellerapp.com/docs/java-client#configuration
+There are some more configuration options, which you can read about at
+http://www.yellerapp.com/docs/java-client#configuration
 
-To report an exception, simply pass it into ```java yellerClient.report```. That's all there is to it, we report the exception to
+To report an exception, simply pass it into ```java yellerClient.report```.
+That's all there is to it, we report the exception to
 the server. You'll be fixing your bugs in no time.
 
 ### Report your own exception
@@ -46,3 +48,19 @@ try {
   throw t;
 }
 ```
+
+## Configuration
+
+YellerClient (at the moment) exposes a single configuration option:
+`setErrorHandler`. This lets you plug in how you handle exceptions out of
+Yeller's servers.
+
+The standard error handler doesn't report IO exceptions at all, and prints
+authorization errors to stderr (these will only happen if you get your api key
+wrong, or your project got deleted).
+
+# Robustness
+
+This client does some basic roundtripping/timeouts, so it can handle problems
+with individual yeller servers. After trying all the servers twice, it will
+stop reporting the current exception, then try each one again for the next one.
