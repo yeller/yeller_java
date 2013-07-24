@@ -51,13 +51,18 @@ try {
 
 ## Configuration
 
-YellerClient (at the moment) exposes a single configuration option:
-`setErrorHandler`. This lets you plug in how you handle exceptions out of
-Yeller's servers.
+YellerClient (at the moment) exposes a few single configuration options.
+The one you are most likely to look at is `setErrorHandler`. This lets you plug
+in how you handle exceptions out of Yeller's servers. You can implement a new
+error handler by implementing the interface `YellerErrorHandler`, maybe logging
+to a particular logging framework, or sending to syslog, etc.
 
 The standard error handler doesn't report IO exceptions at all, and prints
 authorization errors to stderr (these will only happen if you get your api key
 wrong, or your project got deleted).
+
+The other configuration option, which is only really exposed for testing purposes is
+`setUrls`. This lets you set which yeller backends to talk to.
 
 # Robustness
 
