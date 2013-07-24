@@ -17,12 +17,7 @@ public class YellerHTTPClient implements YellerClient {
 	public YellerHTTPClient(String apiKey) {
 		this.apiKey = apiKey;
 		this.formatter = new ExceptionFormatter();
-		this.http = new HTTPClient() {
-			@Override
-			public void post(String url, FormattedException exception) {
-				// TODO Auto-generated method stub
-			}
-		};
+		this.http = new ApacheHTTPClient();
 		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http);
 	}
 

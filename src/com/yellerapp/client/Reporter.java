@@ -29,7 +29,11 @@ public class Reporter {
 				this.currentBackend = (this.currentBackend + 1) % urls.length;
 			} catch (IOException e) {
 				this.currentBackend = (this.currentBackend + 1) % urls.length;
+				System.out.println(this.urls[this.currentBackend]);
+				e.printStackTrace();
 				report(exception, retryCount + 1);
+			} catch (AuthorizationException e) {
+				e.printStackTrace();
 			}
 		}
 	}

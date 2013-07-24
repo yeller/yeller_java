@@ -10,15 +10,16 @@ import com.yellerapp.client.YellerHTTPClient;
 public class EndToEndTest {
 	@Test
 	public void itReportsAnExceptionToYeller() throws IOException {
-		FakeServer server = new FakeServer("localhost:6666", "/sample-api-key");
+		FakeServer server = new FakeServer("localhost", 6666, "/sample-api-key");
 		server.start();
-		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("localhost:6666");
+		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("http://localhost:6666");
 		try {
 			throw new RuntimeException();
 		} catch (Throwable t) {
 			client.report(t);
 		}
 		server.shouldHaveRecordedExceptionWithType("RuntimeException");
+		server.stop();
 	}
 
 	@Test
@@ -29,6 +30,6 @@ public class EndToEndTest {
 		// attach: custom time
 		// attach: custom type
 		// attach: custom message
-		System.out.println("TODO");
+		System.out.println("TODO: itCanReportAnExceptionWithExtraDetail");
 	}
 }
