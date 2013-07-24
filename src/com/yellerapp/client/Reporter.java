@@ -30,10 +30,11 @@ public class Reporter {
 						exception);
 				this.currentBackend = (this.currentBackend + 1) % urls.length;
 			} catch (IOException e) {
+				this.handler.reportIOError(this.urls[this.currentBackend], e);
 				this.currentBackend = (this.currentBackend + 1) % urls.length;
 				report(exception, retryCount + 1);
 			} catch (AuthorizationException e) {
-				this.handler.reportYellerError(this.urls[this.currentBackend], e);
+				this.handler.reportAuthError(this.urls[this.currentBackend], e);
 			}
 		}
 	}

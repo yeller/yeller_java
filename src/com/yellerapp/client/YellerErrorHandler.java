@@ -2,6 +2,7 @@ package com.yellerapp.client;
 
 public interface YellerErrorHandler {
 
-	void reportYellerError(String string, Throwable e);
+	void reportAuthError(String backend, Throwable e);
 
+	void reportIOError(String backend, Throwable e);
 }

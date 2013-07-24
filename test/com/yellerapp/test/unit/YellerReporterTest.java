@@ -57,6 +57,23 @@ public class YellerReporterTest {
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
 				will(throwException(new IOException()));
 				oneOf(http).post("http://api2.yellerapp.com/api-key-here", exception);
+				allowing(errorHandler).reportIOError(with(Matchers.any(String.class)), with(Matchers.any(Throwable.class)));
+			}
+		});
+		reporter.report(exception);
+	}
+
+	@Test
+	public void itReportsIOExceptionsToTheErrorHandler() throws IOException, AuthorizationException {
+		final HTTPClient http = mockery.mock(HTTPClient.class);
+		final FormattedException exception = new FormattedException();
+		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler);
+		mockery.checking(new Expectations() {
+			{
+				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
+				will(throwException(new IOException()));
+				allowing(http).post(with(Matchers.any(String.class)), with(Matchers.any(FormattedException.class)));
+				oneOf(errorHandler).reportIOError(with(Matchers.is("http://api1.yellerapp.com")), with(Matchers.any(IOException.class)));
 			}
 		});
 		reporter.report(exception);
@@ -71,7 +88,7 @@ public class YellerReporterTest {
 			{
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
 				will(throwException(new AuthorizationException()));
-				oneOf(errorHandler).reportYellerError(with("http://api1.yellerapp.com"), with(Matchers.any(AuthorizationException.class)));
+				oneOf(errorHandler).reportAuthError(with("http://api1.yellerapp.com"), with(Matchers.any(AuthorizationException.class)));
 			}
 		});
 		reporter.report(exception);
