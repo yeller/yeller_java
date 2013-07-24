@@ -9,7 +9,6 @@ public class YellerHTTPClient implements YellerClient {
 		"http://api5.yellerapp.com"
 	};
 
-	private String[] urls;
 	private final String apiKey;
 	private final ExceptionFormatter formatter;
 	private Reporter reporter;
@@ -39,9 +38,7 @@ public class YellerHTTPClient implements YellerClient {
 
 	@Override
 	public YellerHTTPClient setUrls(String... urls) {
-		this.urls = urls;
 		this.reporter = new Reporter(apiKey, urls, http);
 		return this;
 	}
-
 }
