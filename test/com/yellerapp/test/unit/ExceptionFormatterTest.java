@@ -35,8 +35,40 @@ public class ExceptionFormatterTest {
 	}
 
 	@Test
+	public void itTrimsTheMessageToOneThousandCharacters() {
+		FormattedException formatted;
+		try {
+			StringBuilder sb = new StringBuilder(2000);
+			for (int i=0; i<2000; i++) {
+				sb.append('a');
+			}
+			String reallyLongMessage = sb.toString();
+			throw new RuntimeException(reallyLongMessage);
+		} catch (Throwable t) {
+			formatted = exceptionFormatter.format(t);
+			assertThat(formatted.message.length(), is(1000));
+		}
+	}
+
+	@Test
 	public void itPullsTheStacktraceFromTheMessage() {
 		assertThat(formatDefault().stackTrace.get(0).get(0), is("ExceptionFormatterTest.java"));
+	}
+
+	@Test
+	public void itTrimsTheStracktraceToOneThousandLines() {
+		FormattedException formatted;
+		try {
+			throw new RuntimeException();
+		} catch (Throwable t) {
+			StackTraceElement[] newStackTrace = new StackTraceElement[2000];
+			for(int i=0; i<newStackTrace.length; i++) {
+				newStackTrace[i] = t.getStackTrace()[0];
+			}
+			t.setStackTrace(newStackTrace);
+			formatted = exceptionFormatter.format(t);
+			assertThat(formatted.stackTrace.size(), is(1000));
+		}
 	}
 
 	@Test
