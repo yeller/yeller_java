@@ -10,6 +10,8 @@ public class YellerHTTPClient implements YellerClient {
 	};
 
 	private final String apiKey;
+	private String[] urls;
+	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
 	private final ExceptionFormatter formatter;
 	private Reporter reporter;
 	private final HTTPClient http;
@@ -18,7 +20,7 @@ public class YellerHTTPClient implements YellerClient {
 		this.apiKey = apiKey;
 		this.formatter = new ExceptionFormatter();
 		this.http = new ApacheHTTPClient();
-		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http);
+		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http, errorHandler);
 	}
 
 	public static YellerHTTPClient withApiKey(String apiKey) {
@@ -33,7 +35,14 @@ public class YellerHTTPClient implements YellerClient {
 
 	@Override
 	public YellerHTTPClient setUrls(String... urls) {
-		this.reporter = new Reporter(apiKey, urls, http);
+		this.reporter = new Reporter(apiKey, urls, http, errorHandler);
+		this.urls = urls;
+		return this;
+	}
+
+	@Override
+	public YellerHTTPClient setErrorHandler(YellerErrorHandler handler) {
+		this.reporter = new Reporter(apiKey, this.urls, http, handler);
 		return this;
 	}
 }
