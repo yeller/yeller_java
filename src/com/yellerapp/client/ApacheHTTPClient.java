@@ -21,7 +21,6 @@ public class ApacheHTTPClient implements HTTPClient {
 		this.mapper = new ObjectMapper();
 	}
 
-	@Override
 	public void post(String url, FormattedException exception)
 			throws IOException, AuthorizationException {
 		HttpPost post = new HttpPost(url);

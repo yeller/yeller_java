@@ -27,20 +27,17 @@ public class YellerHTTPClient implements YellerClient {
 		return new YellerHTTPClient(apiKey);
 	}
 
-	@Override
 	public void report(Throwable t) {
 		FormattedException formattedException = formatter.format(t);
 		reporter.report(formattedException);
 	}
 
-	@Override
 	public YellerHTTPClient setUrls(String... urls) {
 		this.reporter = new Reporter(apiKey, urls, http, errorHandler);
 		this.urls = urls;
 		return this;
 	}
 
-	@Override
 	public YellerHTTPClient setErrorHandler(YellerErrorHandler handler) {
 		this.reporter = new Reporter(apiKey, this.urls, http, handler);
 		return this;
