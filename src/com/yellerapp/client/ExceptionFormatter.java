@@ -3,10 +3,11 @@ package com.yellerapp.client;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ExceptionFormatter {
 
-	public FormattedException format(Throwable t) {
+	public FormattedException format(Throwable t, HashMap<String,Object> custom) {
 		FormattedException e = new FormattedException();
 		e.type = t.getClass().getSimpleName();
 		e.message = t.getMessage();
@@ -20,6 +21,7 @@ public class ExceptionFormatter {
 			e.host = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException u) {
 		}
+		e.customData = custom;
 		return e;
 	}
 

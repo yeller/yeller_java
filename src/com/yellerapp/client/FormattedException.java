@@ -1,7 +1,9 @@
 package com.yellerapp.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class FormattedException {
@@ -15,4 +17,7 @@ public class FormattedException {
 	@JsonSerialize
 	public String host;
 
+	@JsonSerialize
+	@JsonProperty("custom-data")
+	public HashMap<String, Object> customData;
 }

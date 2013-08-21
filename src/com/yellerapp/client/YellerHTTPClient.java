@@ -1,6 +1,10 @@
 package com.yellerapp.client;
 
+import java.util.HashMap;
+
 public class YellerHTTPClient implements YellerClient {
+	private static final HashMap<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
+
 	public static String[] DEFAULT_URLS = new String[] {
 		"http://api1.yellerapp.com",
 		"http://api2.yellerapp.com",
@@ -28,7 +32,11 @@ public class YellerHTTPClient implements YellerClient {
 	}
 
 	public void report(Throwable t) {
-		FormattedException formattedException = formatter.format(t);
+		report(t, NO_CUSTOM_DATA);
+	}
+
+	public void report(Throwable t, HashMap<String, Object> custom) {
+		FormattedException formattedException = formatter.format(t, custom);
 		reporter.report(formattedException);
 	}
 
@@ -42,4 +50,5 @@ public class YellerHTTPClient implements YellerClient {
 		this.reporter = new Reporter(apiKey, this.urls, http, handler);
 		return this;
 	}
+
 }
