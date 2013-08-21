@@ -1,3 +1,6 @@
 #!/bin/bash
 
+set -e
+
+lein with-profile test javac
 lein with-profile test run -m org.junit.runner.JUnitCore com.yellerapp.test.endtoend.EndToEndTest com.yellerapp.test.unit.YellerReporterTest com.yellerapp.test.unit.ExceptionFormatterTest
