@@ -13,8 +13,4 @@
                                   [org.jmock/jmock-junit4 "2.6.0"]
                                    [org.clojure/clojure "1.5.1"]
                                    [org.hamcrest/hamcrest-all "1.3"]]
-                   :plugins {org.clojars.tcrayford/lein-junit "1.1.5-SNAPSHOT"}
-                   :junit ["test"]
-                   :junit-formatter :xml
-                   :junit-options {:fork "off"}
-                   :java-source-paths ["src" "test"]}})
+                    :java-source-paths ["src" "test"]}})
