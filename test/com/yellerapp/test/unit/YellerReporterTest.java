@@ -87,7 +87,7 @@ public class YellerReporterTest {
 		mockery.checking(new Expectations() {
 			{
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
-				will(throwException(new AuthorizationException()));
+				will(throwException(new AuthorizationException("unauthorized")));
 				oneOf(errorHandler).reportAuthError(with("http://api1.yellerapp.com"), with(Matchers.any(AuthorizationException.class)));
 			}
 		});
