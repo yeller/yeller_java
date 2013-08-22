@@ -49,6 +49,68 @@ try {
 }
 ```
 
+### Reporting more data
+
+Yeller's api lets you include more detail with your exception. Yeller's Java
+client exposes two additional arguments to yellerClient.report, one that takes
+a `HashMap<String, Object>` of custom data to include (e.g. params, session,
+cookies, user information etc), and one that adds some extra information (url,
+location, which environment the app is running in).
+
+**Custom Data**
+
+Simply pass a HashMap<String, Object> to report.
+
+```java
+try {
+  // Your code here
+} catch (Throwable t) {
+  HashMap<String, Object> custom = new HashMap<String, Object>();
+  custom.put("user_email", "foo@example.com");
+  yellerClient.report(t, custom);
+  throw t;
+}
+```
+
+**Extra Detail**
+
+Construct and pass a `YellerExtraDetail` (which has a builder like interface):
+
+```java
+try {
+  // Your code here
+} catch (Throwable t) {
+  YellerExtraDetail detail = new YellerExtraDetail()
+    .withApplicationEnvironment("production")
+    .withUrl("http://example.com/error")
+    .withLocation("UserServlet");
+  yellerClient.report(t, extraDetail);
+  throw t;
+}
+```
+
+All of the fields are optional, so just miss out any that you can't fill in.
+
+** Bolth **
+
+Of course, you can add both custom data and extra detail:
+
+```java
+try {
+  // Your code here
+} catch (Throwable t) {
+  YellerExtraDetail detail = new YellerExtraDetail()
+    .withApplicationEnvironment("production")
+    .withUrl("http://example.com/error")
+    .withLocation("UserServlet");
+  HashMap<String, Object> custom = new HashMap<String, Object>();
+  custom.put("user_email", "foo@example.com");
+  yellerClient.report(t, detail, custom);
+  throw t;
+}
+```
+
+
 ## Configuration
 
 YellerClient (at the moment) exposes a few single configuration options.
