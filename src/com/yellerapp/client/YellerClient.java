@@ -10,4 +10,9 @@ public interface YellerClient {
 	YellerHTTPClient setErrorHandler(YellerErrorHandler handler);
 
 	public void report(Throwable t, HashMap<String, Object> custom);
+
+	public void report(Throwable t, YellerExtraDetail extraDetail,
+			HashMap<String, Object> custom);
+
+	public void report(Throwable t, YellerExtraDetail extraDetail);
 }

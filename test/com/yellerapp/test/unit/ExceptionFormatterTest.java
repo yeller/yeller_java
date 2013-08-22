@@ -11,17 +11,19 @@ import org.junit.Test;
 
 import com.yellerapp.client.ExceptionFormatter;
 import com.yellerapp.client.FormattedException;
+import com.yellerapp.client.YellerExtraDetail;
 
 public class ExceptionFormatterTest {
 	private final ExceptionFormatter exceptionFormatter = new ExceptionFormatter();
 	private static final HashMap<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
+	private static final YellerExtraDetail NO_DETAIL = new YellerExtraDetail();
 
 	protected FormattedException formatDefault() {
 		FormattedException formatted;
 		try {
 			throw new RuntimeException("an error message");
 		} catch (Throwable t) {
-			formatted = exceptionFormatter.format(t, NO_CUSTOM_DATA);
+			formatted = exceptionFormatter.format(t, NO_DETAIL, NO_CUSTOM_DATA);
 		}
 		return formatted;
 	}
@@ -41,20 +43,21 @@ public class ExceptionFormatterTest {
 		FormattedException formatted;
 		try {
 			StringBuilder sb = new StringBuilder(2000);
-			for (int i=0; i<2000; i++) {
+			for (int i = 0; i < 2000; i++) {
 				sb.append('a');
 			}
 			String reallyLongMessage = sb.toString();
 			throw new RuntimeException(reallyLongMessage);
 		} catch (Throwable t) {
-			formatted = exceptionFormatter.format(t, NO_CUSTOM_DATA);
+			formatted = exceptionFormatter.format(t, NO_DETAIL, NO_CUSTOM_DATA);
 			assertThat(formatted.message.length(), is(1000));
 		}
 	}
 
 	@Test
 	public void itPullsTheStacktraceFromTheMessage() {
-		assertThat(formatDefault().stackTrace.get(0).get(0), is("ExceptionFormatterTest.java"));
+		assertThat(formatDefault().stackTrace.get(0).get(0),
+				is("ExceptionFormatterTest.java"));
 	}
 
 	@Test
@@ -64,18 +67,19 @@ public class ExceptionFormatterTest {
 			throw new RuntimeException();
 		} catch (Throwable t) {
 			StackTraceElement[] newStackTrace = new StackTraceElement[2000];
-			for(int i=0; i<newStackTrace.length; i++) {
+			for (int i = 0; i < newStackTrace.length; i++) {
 				newStackTrace[i] = t.getStackTrace()[0];
 			}
 			t.setStackTrace(newStackTrace);
-			formatted = exceptionFormatter.format(t, NO_CUSTOM_DATA);
+			formatted = exceptionFormatter.format(t, NO_DETAIL, NO_CUSTOM_DATA);
 			assertThat(formatted.stackTrace.size(), is(1000));
 		}
 	}
 
 	@Test
 	public void itAttachesTheCurrentHostName() throws UnknownHostException {
-		assertThat(formatDefault().host, is(InetAddress.getLocalHost().getHostName()));
+		assertThat(formatDefault().host, is(InetAddress.getLocalHost()
+				.getHostName()));
 	}
 
 	@Test
@@ -91,9 +95,26 @@ public class ExceptionFormatterTest {
 		} catch (Throwable t) {
 			HashMap<String, Object> custom = new HashMap<String, Object>();
 			custom.put("user_id", 1);
-			formatted = exceptionFormatter.format(t, custom);
+			formatted = exceptionFormatter.format(t, NO_DETAIL, custom);
 			assertThat((Integer) formatted.customData.get("user_id"), is(1));
 		}
 	}
-}
 
+	@Test
+	public void itIncludesExtraDetail() {
+		FormattedException formatted;
+		try {
+			throw new RuntimeException();
+		} catch (Throwable t) {
+			YellerExtraDetail detail = NO_DETAIL
+					.withApplicationEnvironment("production")
+					.withUrl("http://example.com/error")
+					.withLocation("UserServlet");
+			formatted = exceptionFormatter.format(t, detail, NO_CUSTOM_DATA);
+			assertThat(formatted.applicationEnvironment, is("production"));
+			assertThat(formatted.url, is("http://example.com/error"));
+			assertThat(formatted.location, is("UserServlet"));
+		}
+	}
+
+}

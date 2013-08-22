@@ -8,8 +8,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class ApacheHTTPClient implements HTTPClient {
 	private final HttpClient http;
@@ -19,6 +21,7 @@ public class ApacheHTTPClient implements HTTPClient {
 		this.http = new DefaultHttpClient();
 		http.getParams().setParameter("http.socket.timeout", new Integer(2000));
 		this.mapper = new ObjectMapper();
+		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
 
 	public void post(String url, FormattedException exception)

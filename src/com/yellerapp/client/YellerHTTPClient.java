@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class YellerHTTPClient implements YellerClient {
 	private static final HashMap<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
+	private static final YellerExtraDetail NO_EXTRA_DETAIL = new YellerExtraDetail();
 
 	public static String[] DEFAULT_URLS = new String[] {
 		"http://api1.yellerapp.com",
@@ -36,9 +37,21 @@ public class YellerHTTPClient implements YellerClient {
 	}
 
 	public void report(Throwable t, HashMap<String, Object> custom) {
-		FormattedException formattedException = formatter.format(t, custom);
+		FormattedException formattedException = formatter.format(t, NO_EXTRA_DETAIL, custom);
 		reporter.report(formattedException);
 	}
+
+	public void report(Throwable t, YellerExtraDetail extraDetail,
+			HashMap<String, Object> custom) {
+		FormattedException formattedException = formatter.format(t, extraDetail, custom);
+		reporter.report(formattedException);
+	}
+
+	public void report(Throwable t, YellerExtraDetail extraDetail) {
+		FormattedException formattedException = formatter.format(t, extraDetail, NO_CUSTOM_DATA);
+		reporter.report(formattedException);
+	}
+
 
 	public YellerHTTPClient setUrls(String... urls) {
 		this.reporter = new Reporter(apiKey, urls, http, errorHandler);

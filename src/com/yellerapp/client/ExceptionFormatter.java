@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class ExceptionFormatter {
 
-	public FormattedException format(Throwable t, HashMap<String,Object> custom) {
+	public FormattedException format(Throwable t, YellerExtraDetail detail, HashMap<String,Object> custom) {
 		FormattedException e = new FormattedException();
 		e.type = t.getClass().getSimpleName();
 		e.message = t.getMessage();
@@ -22,6 +22,9 @@ public class ExceptionFormatter {
 		} catch (UnknownHostException u) {
 		}
 		e.customData = custom;
+		e.applicationEnvironment = detail.applicationEnvironment;
+		e.url = detail.url;
+		e.location = detail.location;
 		return e;
 	}
 
