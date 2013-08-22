@@ -20,4 +20,8 @@ public class FormattedException {
 	@JsonSerialize
 	@JsonProperty("custom-data")
 	public HashMap<String, Object> customData;
+
+	@JsonSerialize
+	@JsonProperty("client-version")
+	public String clientVersion = "yeller-java: 0.0.1-SNAPSHOT";
 }
