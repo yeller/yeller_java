@@ -28,7 +28,7 @@ public class ApacheHTTPClient implements HTTPClient {
 		post.setEntity(new StringEntity(encoded));
 		HttpResponse response = http.execute(post);
 		if (response.getStatusLine().getStatusCode() == 401) {
-			throw new AuthorizationException();
+			throw new AuthorizationException("API key was invalid. For more, see http://yellerapp.com/docs/invalid-version");
 		}
 	}
 
