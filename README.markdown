@@ -92,7 +92,8 @@ public class STDERRErrorHandler implements YellerErrorHandler {
 
 
 The other configuration option, which is only really exposed for testing purposes is
-`setUrls`. This lets you set which yeller backends to talk to.
+`setUrls`. This lets you set which yeller backends to talk to, but is not
+intended for production use at all.
 
 # Robustness
 
