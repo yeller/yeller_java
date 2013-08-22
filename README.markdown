@@ -61,6 +61,36 @@ The standard error handler doesn't report IO exceptions at all, and prints
 authorization errors to stderr (these will only happen if you get your api key
 wrong, or your project got deleted).
 
+**Customizing the error handler:**
+
+```java
+client.setErrorHandler(myErrorHandler);
+```
+
+**Writing your own error handler:**
+
+Here's the source code of the `STDERRErrorHandler`, which prints authorization errors to STDERR.
+Writing your own error handler looks much like this, just implement `YellerErrorHandler`, then pass it
+into `client.setErrorHandler`.
+
+```java
+package com.yellerapp.client;
+
+public class STDERRErrorHandler implements YellerErrorHandler {
+
+    public void reportAuthError(String backend, Throwable e) {
+        System.err.println(backend);
+        e.printStackTrace(System.err);
+    }
+
+    public void reportIOError(String backend, Throwable e) {
+        // purposefully do nothing
+    }
+
+}
+```
+
+
 The other configuration option, which is only really exposed for testing purposes is
 `setUrls`. This lets you set which yeller backends to talk to.
 
