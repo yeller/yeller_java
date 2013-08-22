@@ -109,6 +109,8 @@ public class FakeServer {
 	public void shouldHaveRecordedExceptionWithCustomData(final String key,
 			final int i) {
 		Checker checker = new Checker() {
+
+			@SuppressWarnings("unchecked")
 			public boolean check(HashMap<String, Object> exception) {
 				HashMap<String, Object> hashMap = (HashMap<String, Object>) exception
 						.get("custom-data");

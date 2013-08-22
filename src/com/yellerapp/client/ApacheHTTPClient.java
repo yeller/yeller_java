@@ -11,7 +11,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class ApacheHTTPClient implements HTTPClient {
 	private final HttpClient http;
