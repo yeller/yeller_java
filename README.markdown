@@ -91,6 +91,11 @@ try {
 
 All of the fields are optional, so just miss out any that you can't fill in.
 
+If you *really* want, you can also customize the datetime reported, by setting
+`withDate` on `YellerExtraDetail`. This takes a java.util.Date, and will UTC
+format it before sending it over the wire. This is not reccommended for most use
+(usually the client fills it in for you), but it's there if you need it.
+
 ** Bolth **
 
 Of course, you can add both custom data and extra detail:
