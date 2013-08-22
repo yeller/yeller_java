@@ -13,7 +13,6 @@ public class ExceptionFormatter {
 		e.message = t.getMessage();
 		if (e.message != null) {
 			e.message = e.message.substring(0, Math.min(1000, e.message.length()));
-			System.out.println(e.message.length());
 		}
 
 		e.stackTrace = formatStackTrace(t.getStackTrace());
