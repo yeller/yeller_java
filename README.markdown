@@ -133,7 +133,7 @@ client.setErrorHandler(myErrorHandler);
 
 Here's the source code of the `STDERRErrorHandler`, which prints authorization errors to STDERR.
 Writing your own error handler looks much like this, just implement `YellerErrorHandler`, then pass it
-into `client.setErrorHandler`.
+into `client.setErrorHandler`. You might want to do this for e.g. integration with a logging library you use.
 
 ```java
 package com.yellerapp.client;
