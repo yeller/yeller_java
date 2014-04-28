@@ -31,9 +31,6 @@ you instantiate a client with it thusly:
 YellerClient yellerClient = new YellerClient('YOUR_API_KEY_HERE');
 ```
 
-There are some more configuration options, which you can read about at
-http://www.yellerapp.com/docs/java-client#configuration
-
 To report an exception, simply pass it into ```java yellerClient.report```.
 That's all there is to it, we report the exception to
 the server. You'll be fixing your bugs in no time.
@@ -156,7 +153,6 @@ public class STDERRErrorHandler implements YellerErrorHandler {
 
 }
 ```
-
 
 The other configuration option, which is only really exposed for testing purposes is
 `setUrls`. This lets you set which yeller backends to talk to, but is not
