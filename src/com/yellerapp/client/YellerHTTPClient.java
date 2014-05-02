@@ -7,11 +7,11 @@ public class YellerHTTPClient implements YellerClient {
 	private static final YellerExtraDetail NO_EXTRA_DETAIL = new YellerExtraDetail();
 
 	public static String[] DEFAULT_URLS = new String[] {
-		"http://api1.yellerapp.com",
-		"http://api2.yellerapp.com",
-		"http://api3.yellerapp.com",
-		"http://api4.yellerapp.com",
-		"http://api5.yellerapp.com"
+		"http://collector1.yellerapp.com",
+		"http://collector2.yellerapp.com",
+		"http://collector3.yellerapp.com",
+		"http://collector4.yellerapp.com",
+		"http://collector5.yellerapp.com"
 	};
 
 	private final String apiKey;
