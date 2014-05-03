@@ -16,10 +16,11 @@ public class YellerHTTPClient implements YellerClient {
 	};
 
 	private final String apiKey;
+	private Reporter reporter;
+
 	private String[] urls = DEFAULT_URLS;
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
 	private final ExceptionFormatter formatter = new ExceptionFormatter();
-	private Reporter reporter;
 	private final HTTPClient http = new ApacheHTTPClient();
 
 	public YellerHTTPClient(String apiKey) {
