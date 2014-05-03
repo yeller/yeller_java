@@ -5,12 +5,11 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 public class ExceptionFormatter {
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
 	private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("UTC");
 
 	public FormattedException format(Throwable t, YellerExtraDetail detail, Map<String,Object> custom) {
