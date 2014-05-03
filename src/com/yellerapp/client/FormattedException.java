@@ -15,6 +15,7 @@ public class FormattedException {
 	public String message;
 
 	@JsonSerialize
+	@JsonProperty("stacktrace")
 	public ArrayList<ArrayList<String>> stackTrace;
 
 	@JsonSerialize
