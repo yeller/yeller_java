@@ -1,6 +1,6 @@
 package com.yellerapp.client;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface YellerClient {
 	public void report(Throwable t);
@@ -9,10 +9,10 @@ public interface YellerClient {
 
 	YellerHTTPClient setErrorHandler(YellerErrorHandler handler);
 
-	public void report(Throwable t, HashMap<String, Object> custom);
+	public void report(Throwable t, Map<String, Object> custom);
 
 	public void report(Throwable t, YellerExtraDetail extraDetail,
-			HashMap<String, Object> custom);
+			Map<String, Object> custom);
 
 	public void report(Throwable t, YellerExtraDetail extraDetail);
 }

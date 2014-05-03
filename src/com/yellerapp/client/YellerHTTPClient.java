@@ -1,9 +1,10 @@
 package com.yellerapp.client;
 
+import java.util.Map;
 import java.util.HashMap;
 
 public class YellerHTTPClient implements YellerClient {
-	private static final HashMap<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
+	private static final Map<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
 	private static final YellerExtraDetail NO_EXTRA_DETAIL = new YellerExtraDetail();
 
 	public static String[] DEFAULT_URLS = new String[] {
@@ -36,13 +37,13 @@ public class YellerHTTPClient implements YellerClient {
 		report(t, NO_CUSTOM_DATA);
 	}
 
-	public void report(Throwable t, HashMap<String, Object> custom) {
+	public void report(Throwable t, Map<String, Object> custom) {
 		FormattedException formattedException = formatter.format(t, NO_EXTRA_DETAIL, custom);
 		reporter.report(formattedException);
 	}
 
 	public void report(Throwable t, YellerExtraDetail extraDetail,
-			HashMap<String, Object> custom) {
+			Map<String, Object> custom) {
 		FormattedException formattedException = formatter.format(t, extraDetail, custom);
 		reporter.report(formattedException);
 	}
