@@ -16,7 +16,7 @@ public class YellerHTTPClient implements YellerClient {
 	};
 
 	private final String apiKey;
-	private String[] urls;
+	private String[] urls = DEFAULT_URLS;
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
 	private final ExceptionFormatter formatter;
 	private Reporter reporter;
