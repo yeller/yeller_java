@@ -18,14 +18,12 @@ public class YellerHTTPClient implements YellerClient {
 	private final String apiKey;
 	private String[] urls = DEFAULT_URLS;
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
-	private final ExceptionFormatter formatter;
+	private final ExceptionFormatter formatter = new ExceptionFormatter();
 	private Reporter reporter;
-	private final HTTPClient http;
+	private final HTTPClient http = new ApacheHTTPClient();
 
 	public YellerHTTPClient(String apiKey) {
 		this.apiKey = apiKey;
-		this.formatter = new ExceptionFormatter();
-		this.http = new ApacheHTTPClient();
 		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http, errorHandler);
 	}
 
