@@ -112,6 +112,16 @@ try {
 }
 ```
 
+## Uncaught Exception Handler
+
+`YellerHTTPClient` also implements `java.lang.Thread.UncaughtExceptionHandler`. To se it as the default exception handler across all your threads:
+
+```java
+Thread.setDefaultUncaughtExceptionHandler(yeller);
+```
+
+(it isn't set by default. Global mutable state :(((( )
+
 
 ## Configuration
 
