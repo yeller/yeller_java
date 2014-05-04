@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
-public class YellerHTTPClient implements YellerClient {
+public class YellerHTTPClient implements YellerClient, java.lang.Thread.UncaughtExceptionHandler {
 	private static final Map<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
 	private static final YellerExtraDetail NO_EXTRA_DETAIL = new YellerExtraDetail();
 
@@ -77,6 +77,17 @@ public class YellerHTTPClient implements YellerClient {
 	public YellerHTTPClient setErrorHandler(YellerErrorHandler handler) {
 		this.reporter = new Reporter(apiKey, this.urls, http, handler);
 		return this;
+	}
+
+	public void uncaughtException(Thread t, Throwable e) {
+		HashMap<String, Object> threadDetail = new HashMap<String, Object>();
+		threadDetail.put("id", t.getId());
+		threadDetail.put("group", t.getThreadGroup().getName());
+		threadDetail.put("priority", t.getPriority());
+		threadDetail.put("name", t.getName());
+		HashMap<String, Object> detail = new HashMap<String, Object>();
+		detail.put("thread", threadDetail);
+		report(e, detail);
 	}
 
 }
