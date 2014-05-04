@@ -29,12 +29,12 @@ public class Reporter {
 				http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
 						exception);
 				this.currentBackend = (this.currentBackend + 1) % urls.length;
-			} catch (IOException e) {
+			} catch (AuthorizationException e) {
+				this.handler.reportAuthError(this.urls[this.currentBackend], e);
+			} catch (Exception e) {
 				this.handler.reportIOError(this.urls[this.currentBackend], e);
 				this.currentBackend = (this.currentBackend + 1) % urls.length;
 				report(exception, retryCount + 1);
-			} catch (AuthorizationException e) {
-				this.handler.reportAuthError(this.urls[this.currentBackend], e);
 			}
 		}
 	}
