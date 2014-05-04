@@ -1,7 +1,5 @@
 package com.yellerapp.client;
 
-import java.io.IOException;
-
 public class Reporter {
 
 	private final String apiKey;
