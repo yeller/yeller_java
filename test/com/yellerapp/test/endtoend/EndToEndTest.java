@@ -1,6 +1,5 @@
 package com.yellerapp.test.endtoend;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.junit.Test;
