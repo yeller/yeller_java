@@ -11,7 +11,7 @@ import com.yellerapp.client.YellerHTTPClient;
 
 public class EndToEndTest {
 	@Test
-	public void itReportsAnExceptionToYeller() throws IOException {
+	public void itReportsAnExceptionToYeller() throws Exception {
 		FakeServer server = new FakeServer("localhost", 6666, "/sample-api-key");
 		server.start();
 		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("http://localhost:6666");
@@ -25,7 +25,7 @@ public class EndToEndTest {
 	}
 
 	@Test
-	public void itCanReportAnExceptionWithCustomData() throws IOException {
+	public void itCanReportAnExceptionWithCustomData() throws Exception {
 		FakeServer server = new FakeServer("localhost", 6666, "/sample-api-key");
 		server.start();
 		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("http://localhost:6666");
@@ -41,7 +41,7 @@ public class EndToEndTest {
 	}
 
 	@Test
-	public void itCanReportAnExceptionWithExtraDetail() throws IOException {
+	public void itCanReportAnExceptionWithExtraDetail() throws Exception {
 		FakeServer server = new FakeServer("localhost", 6666, "/sample-api-key");
 		server.start();
 		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("http://localhost:6666");

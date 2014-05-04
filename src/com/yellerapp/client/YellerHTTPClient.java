@@ -1,5 +1,6 @@
 package com.yellerapp.client;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -8,11 +9,11 @@ public class YellerHTTPClient implements YellerClient {
 	private static final YellerExtraDetail NO_EXTRA_DETAIL = new YellerExtraDetail();
 
 	public static String[] DEFAULT_URLS = new String[] {
-		"http://collector1.yellerapp.com",
-		"http://collector2.yellerapp.com",
-		"http://collector3.yellerapp.com",
-		"http://collector4.yellerapp.com",
-		"http://collector5.yellerapp.com"
+		"https://collector1.yellerapp.com",
+		"https://collector2.yellerapp.com",
+		"https://collector3.yellerapp.com",
+		"https://collector4.yellerapp.com",
+		"https://collector5.yellerapp.com"
 	};
 
 	private final String apiKey;
@@ -20,15 +21,22 @@ public class YellerHTTPClient implements YellerClient {
 
 	private String[] urls = DEFAULT_URLS;
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
-	private final ExceptionFormatter formatter = new ExceptionFormatter();
-	private final HTTPClient http = new ApacheHTTPClient();
+	private HTTPClient http = new ApacheHTTPClient();
 
-	public YellerHTTPClient(String apiKey) {
+	private final ExceptionFormatter formatter = new ExceptionFormatter();
+
+	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
 		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http, errorHandler);
+		if (Arrays.deepEquals(urls, DEFAULT_URLS)) {
+			this.http = new ApacheYellerAppSSLHTTPClient();
+			this.reporter = new Reporter(this.apiKey, urls, this.http, this.errorHandler);
+		} else {
+			this.http = new ApacheHTTPClient();
+		}
 	}
 
-	public static YellerHTTPClient withApiKey(String apiKey) {
+	public static YellerHTTPClient withApiKey(String apiKey) throws Exception {
 		return new YellerHTTPClient(apiKey);
 	}
 
@@ -53,9 +61,16 @@ public class YellerHTTPClient implements YellerClient {
 	}
 
 
-	public YellerHTTPClient setUrls(String... urls) {
+	public YellerHTTPClient setUrls(String... urls) throws Exception {
 		this.reporter = new Reporter(apiKey, urls, http, errorHandler);
 		this.urls = urls;
+		if (Arrays.deepEquals(this.urls, DEFAULT_URLS)) {
+			this.http = new ApacheYellerAppSSLHTTPClient();
+			this.reporter = new Reporter(this.apiKey, urls, this.http, this.errorHandler);
+		} else {
+			this.http = new ApacheHTTPClient();
+			this.reporter = new Reporter(this.apiKey, urls, this.http, this.errorHandler);
+		}
 		return this;
 	}
 
