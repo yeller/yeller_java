@@ -36,10 +36,7 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 		HttpPost post = new HttpPost(url);
 		final String encoded = encode(exception);
 		post.setEntity(new StringEntity(encoded));
-		System.out.println("about to poast");
 		HttpResponse response = http.execute(post);
-		System.out.println(response);
-		System.out.println(response.getStatusLine().getStatusCode());
 		if (response.getStatusLine().getStatusCode() == 401) {
 			throw new AuthorizationException("API key was invalid.");
 		}
