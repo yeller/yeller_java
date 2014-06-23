@@ -26,14 +26,18 @@ public class Reporter {
 			try {
 				http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
 						exception);
-				this.currentBackend = (this.currentBackend + 1) % urls.length;
+                this.cycleBackend();
 			} catch (AuthorizationException e) {
 				this.handler.reportAuthError(this.urls[this.currentBackend], e);
 			} catch (Exception e) {
 				this.handler.reportIOError(this.urls[this.currentBackend], e);
-				this.currentBackend = (this.currentBackend + 1) % urls.length;
+                this.cycleBackend();
 				report(exception, retryCount + 1);
 			}
 		}
 	}
+
+    protected synchronized void cycleBackend() {
+        this.currentBackend = (this.currentBackend + 1) % urls.length;
+    }
 }
