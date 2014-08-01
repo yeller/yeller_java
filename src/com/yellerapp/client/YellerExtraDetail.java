@@ -7,7 +7,7 @@ public class YellerExtraDetail {
 	public final String url;
 	public final String location;
 	public final Date dateTime;
-	
+
 	public YellerExtraDetail(String applicationEnvironment, String url, String location, Date dateTime) {
 		this.applicationEnvironment = applicationEnvironment;
 		this.url = url;
