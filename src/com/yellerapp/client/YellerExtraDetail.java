@@ -16,7 +16,7 @@ public class YellerExtraDetail {
 	}
 
 	public YellerExtraDetail() {
-		this.applicationEnvironment = null;
+		this.applicationEnvironment = "production";
 		this.url = null;
 		this.location = null;
 		this.dateTime = null;

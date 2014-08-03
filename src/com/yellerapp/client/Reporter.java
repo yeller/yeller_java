@@ -17,8 +17,9 @@ public class Reporter {
 	}
 
 	public void report(FormattedException exception) {
-		if (exception.applicationEnvironment.equals("test")
-				|| exception.applicationEnvironment.equals("development")) {
+		if (exception.applicationEnvironment != null
+				&& (exception.applicationEnvironment.equals("test")
+				|| exception.applicationEnvironment.equals("development"))) {
 			// ignore
 		} else {
 			report(exception, 0);
