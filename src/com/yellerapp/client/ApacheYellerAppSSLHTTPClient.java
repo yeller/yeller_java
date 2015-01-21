@@ -34,19 +34,19 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	}
 
 	public void post(String url, FormattedException exception)
-			throws IOException, AuthorizationException {
-            HttpPost post = new HttpPost(url);
+        throws IOException, AuthorizationException {
+        HttpPost post = new HttpPost(url);
+        try {
             final String encoded = encode(exception);
             post.setEntity(new StringEntity(encoded));
             HttpResponse response = http.execute(post);
-            try {
-                if (response.getStatusLine().getStatusCode() == 401) {
-                    throw new AuthorizationException("API key was invalid.");
-                }
-            } finally {
-                post.releaseConnection();
+            if (response.getStatusLine().getStatusCode() == 401) {
+                throw new AuthorizationException("API key was invalid.");
             }
-	}
+        } finally {
+            post.releaseConnection();
+        }
+    }
 
 	private HttpClient makeSecuredHTTPClient() throws Exception {
 		RequestConfig requestConfig = RequestConfig.custom().

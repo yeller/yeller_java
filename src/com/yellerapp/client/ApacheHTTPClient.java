@@ -22,7 +22,6 @@ public class ApacheHTTPClient implements HTTPClient {
 
 	public ApacheHTTPClient() {
 		this.http = buildHTTPClient();
-		http.getParams().setParameter("http.socket.timeout", new Integer(2000));
 		this.mapper = new ObjectMapper();
 		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
@@ -39,15 +38,19 @@ public class ApacheHTTPClient implements HTTPClient {
     };
 
 	public void post(String url, FormattedException exception)
-			throws IOException, AuthorizationException {
-		HttpPost post = new HttpPost(url);
-		final String encoded = encode(exception);
-		post.setEntity(new StringEntity(encoded));
-		HttpResponse response = http.execute(post);
-		if (response.getStatusLine().getStatusCode() == 401) {
-			throw new AuthorizationException("API key was invalid.");
-		}
-	}
+        throws IOException, AuthorizationException {
+        HttpPost post = new HttpPost(url);
+        try {
+            final String encoded = encode(exception);
+            post.setEntity(new StringEntity(encoded));
+            HttpResponse response = http.execute(post);
+            if (response.getStatusLine().getStatusCode() == 401) {
+                throw new AuthorizationException("API key was invalid.");
+            }
+        } finally {
+            post.releaseConnection();
+        }
+    }
 
 	private String encode(FormattedException exception) throws JsonProcessingException {
 		return this.mapper.writeValueAsString(exception);
