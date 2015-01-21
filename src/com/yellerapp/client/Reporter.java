@@ -45,7 +45,7 @@ public class Reporter {
 
 	protected void report(FormattedException exception, int retryCount, Exception previousException) {
 		if (retryCount > (2 * urls.length)) {
-            this.debugLog("ran out of retries, got to: " + retryCount + " last error was " + previousException.toString());
+            this.debugLog("ERROR ran-out-of-retries retry-count=" + retryCount + " last-error=" + previousException.toString());
             this.handler.reportIOError(this.urls[this.currentBackend], previousException);
 			return;
 		} else {
