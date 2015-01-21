@@ -15,6 +15,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	private static final String CERTIFICATE_PATH = "/ca.crt";
+    private static final int CONNECTION_MAX_LIMIT = 64;
 	private final HttpClient http;
 	private final ObjectMapper mapper;
 
@@ -33,13 +35,17 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 
 	public void post(String url, FormattedException exception)
 			throws IOException, AuthorizationException {
-		HttpPost post = new HttpPost(url);
-		final String encoded = encode(exception);
-		post.setEntity(new StringEntity(encoded));
-		HttpResponse response = http.execute(post);
-		if (response.getStatusLine().getStatusCode() == 401) {
-			throw new AuthorizationException("API key was invalid.");
-		}
+            HttpPost post = new HttpPost(url);
+            final String encoded = encode(exception);
+            post.setEntity(new StringEntity(encoded));
+            HttpResponse response = http.execute(post);
+            try {
+                if (response.getStatusLine().getStatusCode() == 401) {
+                    throw new AuthorizationException("API key was invalid.");
+                }
+            } finally {
+                post.releaseConnection();
+            }
 	}
 
 	private HttpClient makeSecuredHTTPClient() throws Exception {
@@ -47,6 +53,8 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 				setSocketTimeout(2000).
 				setConnectTimeout(2000).build();
 		SSLContext context = getComodoSSLContext();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(CONNECTION_MAX_LIMIT);
 		return HttpClients.custom().
 				setSslcontext(context).
 				setDefaultRequestConfig(requestConfig).
