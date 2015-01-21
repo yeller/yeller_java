@@ -4,21 +4,19 @@ exception notifier.
 When an uncaught exception occurs, this library will record the exception in
 Yeller, letting you diagnose bugs in your running app.
 
-# Integration
-
-Note that yeller-java is a lowlevel client. If you happen to use clojure's
-ring, we have a higher level wrapper that builds on this library for your use:
-
 ## Adding to your project
 
 yeller-java is distributed via maven. Assuming your build system is maven
 compatible, you can add the following xml snippet to your pom file to import
 it:
 
-```pom.xml snippet here```
-
-Alternatively, if you just want a jar file, you can grab it from here:
-http:://yeller-java-file.com.
+```xml
+<dependency>
+  <groupId>yeller-java-api</groupId>
+  <artifactId>yeller-java-api</artifactId>
+  <version>0.2.0</version>
+</dependency>
+```
 
 ## Integrating
 
