@@ -7,6 +7,7 @@ public class Reporter {
 	private HTTPClient http;
 	private int currentBackend = 0;
 	private YellerErrorHandler handler;
+    private Debug debug;
 
 	public Reporter(String apiKey, String[] urls, HTTPClient http,
 			YellerErrorHandler handler) {
@@ -14,6 +15,16 @@ public class Reporter {
 		this.urls = urls;
 		this.http = http;
 		this.handler = handler;
+        this.debug = null;
+	}
+
+	public Reporter(String apiKey, String[] urls, HTTPClient http,
+			YellerErrorHandler handler, Debug debug) {
+		this.apiKey = apiKey;
+		this.urls = urls;
+		this.http = http;
+		this.handler = handler;
+        this.debug = debug;
 	}
 
 	public void report(FormattedException exception) {
@@ -22,15 +33,23 @@ public class Reporter {
 						.equals("development"))) {
 			// ignore
 		} else {
-			report(exception, 0);
+			report(exception, 0, null);
 		}
 	}
 
-	protected void report(FormattedException exception, int retryCount) {
+    protected void debugLog(String message) {
+        if (this.debug != null) {
+            this.debug.debug(message);
+        }
+    }
+
+	protected void report(FormattedException exception, int retryCount, Exception previousException) {
 		if (retryCount > (2 * urls.length)) {
+            this.debugLog("ran out of retries, got to: " + retryCount + " last error was " + previousException.toString());
 			return;
 		} else {
 			try {
+                this.debugLog("POST to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
 				http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
 						exception);
 				this.cycleBackend();
@@ -39,7 +58,7 @@ public class Reporter {
 			} catch (Exception e) {
 				this.handler.reportIOError(this.urls[this.currentBackend], e);
 				this.cycleBackend();
-				report(exception, retryCount + 1);
+				report(exception, retryCount + 1, e);
 			}
 		}
 	}

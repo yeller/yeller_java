@@ -74,6 +74,11 @@ public class YellerHTTPClient implements YellerClient, java.lang.Thread.Uncaught
 		return this;
 	}
 
+    public YellerHTTPClient enableDebug() {
+        this.reporter = new Reporter(apiKey, urls, http, errorHandler, new Debug());
+        return this;
+    }
+
 	public YellerHTTPClient setErrorHandler(YellerErrorHandler handler) {
 		this.reporter = new Reporter(apiKey, this.urls, http, handler);
 		return this;
