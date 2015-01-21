@@ -23,9 +23,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	private static final String CERTIFICATE_PATH = "/ca.crt";
-    private static final int CONNECTION_MAX_LIMIT = 64;
+	private static final int CONNECTION_MAX_LIMIT = 64;
+	private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
 	private final HttpClient http;
 	private final ObjectMapper mapper;
+	private PoolingHttpClientConnectionManager connectionManager;
 
 	public ApacheYellerAppSSLHTTPClient() throws Exception {
 		this.http = makeSecuredHTTPClient();
@@ -34,36 +36,40 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	}
 
 	public void post(String url, FormattedException exception)
-        throws IOException, AuthorizationException {
-        HttpPost post = new HttpPost(url);
-        try {
-            final String encoded = encode(exception);
-            post.setEntity(new StringEntity(encoded));
-            HttpResponse response = http.execute(post);
-            if (response.getStatusLine().getStatusCode() == 401) {
-                throw new AuthorizationException("API key was invalid.");
-            }
-        } finally {
-            post.releaseConnection();
-        }
-    }
+			throws IOException, AuthorizationException {
+		HttpPost post = new HttpPost(url);
+		try {
+			final String encoded = encode(exception);
+			post.setEntity(new StringEntity(encoded));
+			HttpResponse response = http.execute(post);
+			if (response.getStatusLine().getStatusCode() == 401) {
+				throw new AuthorizationException("API key was invalid.");
+			}
+		} finally {
+			post.releaseConnection();
+		}
+	}
+
+	public void close() {
+		this.connectionManager.close();
+	};
 
 	private HttpClient makeSecuredHTTPClient() throws Exception {
-		RequestConfig requestConfig = RequestConfig.custom().
-				setSocketTimeout(2000).
-				setConnectTimeout(2000).build();
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setSocketTimeout(2000).setConnectTimeout(2000).build();
 		SSLContext context = getComodoSSLContext();
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(CONNECTION_MAX_LIMIT);
-		return HttpClients.custom().
-				setSslcontext(context).
-				setDefaultRequestConfig(requestConfig).
-				build();
+		this.connectionManager = new PoolingHttpClientConnectionManager();
+		this.connectionManager.setMaxTotal(CONNECTION_MAX_LIMIT);
+		this.connectionManager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+		return HttpClients.custom().setConnectionManager(connectionManager)
+				.setSslcontext(context).setDefaultRequestConfig(requestConfig)
+				.build();
 	}
 
 	private SSLContext getComodoSSLContext() throws Exception {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		Certificate ca = cf.generateCertificate(getResourceAsStream(CERTIFICATE_PATH));
+		Certificate ca = cf
+				.generateCertificate(getResourceAsStream(CERTIFICATE_PATH));
 		KeyStore ks = KeyStore.getInstance("jks");
 		ks.load(null, null);
 		ks.setCertificateEntry("ca", ca);
@@ -77,10 +83,12 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	}
 
 	private InputStream getResourceAsStream(String certificatePath) {
-		return ApacheYellerAppSSLHTTPClient.class.getResourceAsStream(certificatePath);
+		return ApacheYellerAppSSLHTTPClient.class
+				.getResourceAsStream(certificatePath);
 	}
 
-	private String encode(FormattedException exception) throws JsonProcessingException {
+	private String encode(FormattedException exception)
+			throws JsonProcessingException {
 		return this.mapper.writeValueAsString(exception);
 	}
 

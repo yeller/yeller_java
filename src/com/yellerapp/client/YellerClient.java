@@ -5,6 +5,8 @@ import java.util.Map;
 public interface YellerClient {
 	public void report(Throwable t);
 
+	public void close();
+
 	public YellerClient setUrls(String... urls) throws Exception;
 
 	YellerHTTPClient setErrorHandler(YellerErrorHandler handler);
