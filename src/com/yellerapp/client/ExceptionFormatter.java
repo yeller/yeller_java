@@ -13,10 +13,10 @@ public class ExceptionFormatter {
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(
 			"yyyyMMdd'T'HHmmss'Z'");
 	private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("UTC");
-	protected final String rootPackage;
+	protected final String[] applicationPackages;
 
-	public ExceptionFormatter(String rootPackage) {
-		this.rootPackage = rootPackage;
+	public ExceptionFormatter(String... applicationPackages) {
+		this.applicationPackages = applicationPackages;
 	}
 
 	public FormattedException format(Throwable t, YellerExtraDetail detail,
@@ -63,11 +63,18 @@ public class ExceptionFormatter {
 			line.add(elem.getFileName());
 			line.add(Integer.toString(elem.getLineNumber()));
 			line.add(elem.getClassName() + "." + elem.getMethodName());
-			if (this.rootPackage != null
-					&& elem.getClassName().startsWith(this.rootPackage)) {
-				Map<String, Object> opts = new HashMap<String, Object>();
-				opts.put("in-app", new Boolean(true));
-				line.add(opts);
+			if (this.applicationPackages != null) {
+				boolean inApp = false;
+				for (String appPackage : applicationPackages) {
+					if (elem.getClassName().startsWith(appPackage)) {
+						inApp = true;
+					}
+				}
+				if (inApp) {
+					Map<String, Object> opts = new HashMap<String, Object>();
+					opts.put("in-app", new Boolean(true));
+					line.add(opts);
+				}
 			}
 			lines.add(line);
 		}

@@ -27,7 +27,7 @@ public class EndToEndTest {
 	public void itReportsAnExceptionToYellerWithACustomRootPackage() throws Exception {
 		FakeServer server = new FakeServer("localhost", 6666, "/sample-api-key");
 		server.start();
-		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("http://localhost:6666").setRootPackage("com.yellerapp");
+		YellerClient client = YellerHTTPClient.withApiKey("sample-api-key").setUrls("http://localhost:6666").setApplicationPackages("com.yellerapp");
 		try {
 			throw new RuntimeException();
 		} catch (Throwable t) {

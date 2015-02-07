@@ -105,8 +105,8 @@ public class YellerHTTPClient implements YellerClient,
 		report(e, detail);
 	}
 
-	public YellerClient setRootPackage(String rootPackage) {
-		this.formatter = new ExceptionFormatter(rootPackage);
+	public YellerClient setApplicationPackages(String... applicationPackages) {
+		this.formatter = new ExceptionFormatter(applicationPackages);
 		return this;
 	}
 
