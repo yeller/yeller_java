@@ -16,7 +16,7 @@ public class FormattedException {
 
 	@JsonSerialize
 	@JsonProperty("stacktrace")
-	public ArrayList<ArrayList<String>> stackTrace;
+	public ArrayList<ArrayList<Object>> stackTrace;
 
 	@JsonSerialize
 	public String host;

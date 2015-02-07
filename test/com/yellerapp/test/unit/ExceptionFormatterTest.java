@@ -14,7 +14,8 @@ import com.yellerapp.client.FormattedException;
 import com.yellerapp.client.YellerExtraDetail;
 
 public class ExceptionFormatterTest {
-	private final ExceptionFormatter exceptionFormatter = new ExceptionFormatter();
+	private final ExceptionFormatter exceptionFormatter = new ExceptionFormatter(
+			null);
 	private static final HashMap<String, Object> NO_CUSTOM_DATA = new HashMap<String, Object>();
 	private static final YellerExtraDetail NO_DETAIL = new YellerExtraDetail();
 
@@ -56,7 +57,7 @@ public class ExceptionFormatterTest {
 
 	@Test
 	public void itPullsTheStacktraceFromTheMessage() {
-		assertThat(formatDefault().stackTrace.get(0).get(0),
+		assertThat((String) formatDefault().stackTrace.get(0).get(0),
 				is("ExceptionFormatterTest.java"));
 	}
 
@@ -117,4 +118,20 @@ public class ExceptionFormatterTest {
 		}
 	}
 
+	@Test
+	public void itIncludesIfInAppInTheStacktrace() {
+		FormattedException formatted;
+		ExceptionFormatter formatterWithPackage = new ExceptionFormatter(
+				"com.yellerapp");
+		try {
+			throw new RuntimeException();
+		} catch (Throwable t) {
+			formatted = formatterWithPackage.format(t, NO_DETAIL,
+					NO_CUSTOM_DATA);
+			assertThat(
+					(Boolean) ((java.util.Map<String, Object>) formatted.stackTrace
+							.get(0).get(3)).get("in-app"),
+					is(new Boolean(true)));
+		}
+	}
 }

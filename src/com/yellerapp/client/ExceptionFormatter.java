@@ -5,19 +5,28 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 public class ExceptionFormatter {
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(
+			"yyyyMMdd'T'HHmmss'Z'");
 	private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("UTC");
+	protected final String rootPackage;
 
-	public FormattedException format(Throwable t, YellerExtraDetail detail, Map<String,Object> custom) {
+	public ExceptionFormatter(String rootPackage) {
+		this.rootPackage = rootPackage;
+	}
+
+	public FormattedException format(Throwable t, YellerExtraDetail detail,
+			Map<String, Object> custom) {
 		FormattedException e = new FormattedException();
 		e.type = t.getClass().getSimpleName();
 		e.message = t.getMessage();
 		if (e.message != null) {
-			e.message = e.message.substring(0, Math.min(1000, e.message.length()));
+			e.message = e.message.substring(0,
+					Math.min(1000, e.message.length()));
 		}
 
 		e.stackTrace = formatStackTrace(t.getStackTrace());
@@ -42,17 +51,24 @@ public class ExceptionFormatter {
 		return SIMPLE_DATE_FORMAT.format(date);
 	}
 
-	private ArrayList<ArrayList<String>> formatStackTrace(StackTraceElement[] stackTrace) {
-		ArrayList<ArrayList<String>> lines = new ArrayList<ArrayList<String>>();
-		for(int i=0; i<stackTrace.length; i++) {
+	private ArrayList<ArrayList<Object>> formatStackTrace(
+			StackTraceElement[] stackTrace) {
+		ArrayList<ArrayList<Object>> lines = new ArrayList<ArrayList<Object>>();
+		for (int i = 0; i < stackTrace.length; i++) {
 			if (i >= 1000) {
 				break;
 			}
 			StackTraceElement elem = stackTrace[i];
-			ArrayList<String> line = new ArrayList<String>();
+			ArrayList<Object> line = new ArrayList<Object>();
 			line.add(elem.getFileName());
 			line.add(Integer.toString(elem.getLineNumber()));
 			line.add(elem.getClassName() + "." + elem.getMethodName());
+			if (this.rootPackage != null
+					&& elem.getClassName().startsWith(this.rootPackage)) {
+				Map<String, Object> opts = new HashMap<String, Object>();
+				opts.put("in-app", new Boolean(true));
+				line.add(opts);
+			}
 			lines.add(line);
 		}
 		return lines;

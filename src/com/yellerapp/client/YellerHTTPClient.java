@@ -23,7 +23,7 @@ public class YellerHTTPClient implements YellerClient,
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
 	private HTTPClient http = new ApacheHTTPClient();
 
-	private final ExceptionFormatter formatter = new ExceptionFormatter();
+	private final ExceptionFormatter formatter = new ExceptionFormatter(null);
 
 	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
