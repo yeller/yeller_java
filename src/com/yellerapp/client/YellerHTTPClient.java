@@ -23,7 +23,7 @@ public class YellerHTTPClient implements YellerClient,
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
 	private HTTPClient http = new ApacheHTTPClient();
 
-	private final ExceptionFormatter formatter = new ExceptionFormatter(null);
+	private ExceptionFormatter formatter = new ExceptionFormatter(null);
 
 	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
@@ -103,6 +103,11 @@ public class YellerHTTPClient implements YellerClient,
 		HashMap<String, Object> detail = new HashMap<String, Object>();
 		detail.put("thread", threadDetail);
 		report(e, detail);
+	}
+
+	public YellerClient setRootPackage(String rootPackage) {
+		this.formatter = new ExceptionFormatter(rootPackage);
+		return this;
 	}
 
 }
