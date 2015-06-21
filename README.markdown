@@ -14,7 +14,7 @@ it:
 <dependency>
   <groupId>yeller-java-api</groupId>
   <artifactId>yeller-java-api</artifactId>
-  <version>0.2.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
