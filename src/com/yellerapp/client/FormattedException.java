@@ -27,7 +27,7 @@ public class FormattedException {
 
 	@JsonSerialize
 	@JsonProperty("client-version")
-	public String clientVersion = "yeller-java: 0.0.1-SNAPSHOT";
+	public String clientVersion;
 
 	@JsonSerialize
 	@JsonProperty("application-environment")

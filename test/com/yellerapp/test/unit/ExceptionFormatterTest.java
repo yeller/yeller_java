@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.yellerapp.client.ExceptionFormatter;
 import com.yellerapp.client.FormattedException;
+import com.yellerapp.client.Version;
 import com.yellerapp.client.YellerExtraDetail;
 
 public class ExceptionFormatterTest {
@@ -132,6 +133,39 @@ public class ExceptionFormatterTest {
 					(Boolean) ((java.util.Map<String, Object>) formatted.stackTrace
 							.get(0).get(3)).get("in-app"),
 					is(new Boolean(true)));
+		}
+	}
+
+	@Test
+	public void itIncludesClientVersionIfPassed() {
+		FormattedException formatted;
+		final String newClientVersion = "test-client-version: 1.0.0";
+		ExceptionFormatter formatterWithPackage = new ExceptionFormatter(
+				"com.yellerapp");
+		try {
+			throw new RuntimeException();
+		} catch (Throwable t) {
+			formatted = formatterWithPackage.format(t, NO_DETAIL.withClientVersion(newClientVersion),
+					NO_CUSTOM_DATA);
+			assertThat(
+					formatted.clientVersion,
+					is(newClientVersion));
+		}
+	}
+
+	@Test
+	public void itDefaultsClientVersionToGlobal() {
+		FormattedException formatted;
+		ExceptionFormatter formatterWithPackage = new ExceptionFormatter(
+				"com.yellerapp");
+		try {
+			throw new RuntimeException();
+		} catch (Throwable t) {
+			formatted = formatterWithPackage.format(t, NO_DETAIL,
+					NO_CUSTOM_DATA);
+			assertThat(
+					formatted.clientVersion,
+					is(Version.VERSION));
 		}
 	}
 }

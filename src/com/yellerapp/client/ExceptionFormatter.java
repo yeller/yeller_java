@@ -43,6 +43,11 @@ public class ExceptionFormatter {
 		} else {
 			e.dateTime = formatDate(new Date());
 		}
+        if (detail.clientVersion != null) {
+            e.clientVersion = detail.clientVersion;
+        } else {
+            e.clientVersion = Version.VERSION;
+        }
 		return e;
 	}
 
