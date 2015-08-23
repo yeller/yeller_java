@@ -1,5 +1,7 @@
 package com.yellerapp.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
@@ -21,20 +23,15 @@ public class YellerHTTPClient implements YellerClient,
 
 	private String[] urls = DEFAULT_URLS;
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
-	private HTTPClient http = new ApacheHTTPClient();
+	private HTTPClient http = new ApacheHTTPClient(new ObjectMapper());
 
 	private ExceptionFormatter formatter = new ExceptionFormatter(new String[0]);
+	private ObjectMapper mapper = null;
 
 	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
 		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http, errorHandler);
-		if (Arrays.deepEquals(urls, DEFAULT_URLS)) {
-			this.http = new ApacheYellerAppSSLHTTPClient();
-			this.reporter = new Reporter(this.apiKey, urls, this.http,
-					this.errorHandler);
-		} else {
-			this.http = new ApacheHTTPClient();
-		}
+		this.resetHTTPClient();
 	}
 
 	public static YellerHTTPClient withApiKey(String apiKey) throws Exception {
@@ -67,15 +64,35 @@ public class YellerHTTPClient implements YellerClient,
 	public YellerHTTPClient setUrls(String... urls) throws Exception {
 		this.reporter = new Reporter(apiKey, urls, http, errorHandler);
 		this.urls = urls;
+		this.resetHTTPClient();
+		return this;
+	}
+
+	protected void resetHTTPClient() throws Exception {
 		if (Arrays.deepEquals(this.urls, DEFAULT_URLS)) {
-			this.http = new ApacheYellerAppSSLHTTPClient();
-			this.reporter = new Reporter(this.apiKey, urls, this.http,
-					this.errorHandler);
+			this.http = new ApacheYellerAppSSLHTTPClient(this.mapper());
 		} else {
-			this.http = new ApacheHTTPClient();
-			this.reporter = new Reporter(this.apiKey, urls, this.http,
-					this.errorHandler);
+			this.http = new ApacheHTTPClient(this.mapper());
 		}
+		this.resetReporter();
+	}
+
+	protected ObjectMapper mapper() {
+		if (this.mapper == null) {
+			return new ObjectMapper();
+		} else {
+			return this.mapper;
+		}
+	}
+
+	protected void resetReporter() {
+		this.reporter = new Reporter(this.apiKey, this.urls, this.http,
+				this.errorHandler);
+	}
+
+	public YellerHTTPClient withObjectMapper(ObjectMapper mapper) throws Exception {
+		this.mapper = mapper;
+		this.resetHTTPClient();
 		return this;
 	}
 
@@ -109,5 +126,4 @@ public class YellerHTTPClient implements YellerClient,
 		this.formatter = new ExceptionFormatter(applicationPackages);
 		return this;
 	}
-
 }

@@ -29,9 +29,9 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	private final ObjectMapper mapper;
 	private PoolingHttpClientConnectionManager connectionManager;
 
-	public ApacheYellerAppSSLHTTPClient() throws Exception {
+	public ApacheYellerAppSSLHTTPClient(ObjectMapper mapper) throws Exception {
 		this.http = makeSecuredHTTPClient();
-		this.mapper = new ObjectMapper();
+		this.mapper = mapper;
 		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
 

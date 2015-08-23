@@ -22,9 +22,9 @@ public class ApacheHTTPClient implements HTTPClient {
 	private final ObjectMapper mapper;
 	private PoolingHttpClientConnectionManager connectionManager;
 
-	public ApacheHTTPClient() {
+	public ApacheHTTPClient(ObjectMapper mapper) {
 		this.http = buildHTTPClient();
-		this.mapper = new ObjectMapper();
+		this.mapper = mapper;
 		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
 
