@@ -1,5 +1,7 @@
 language: clojure
 script: "lein pom && mvn test && lein javac"
+notifications:
+  slack: yeller:nHkgeCJkcwwjMF0DfOrmDccR
 
 jdk:
   - oraclejdk8
