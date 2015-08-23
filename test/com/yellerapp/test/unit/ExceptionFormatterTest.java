@@ -168,4 +168,45 @@ public class ExceptionFormatterTest {
 					is(Version.VERSION));
 		}
 	}
+
+
+	@Test
+	public void itIncludesNestedExceptionsTest() {
+		FormattedException formatted;
+		ExceptionFormatter formatterWithPackage = new ExceptionFormatter(
+				"com.yellerapp");
+		try {
+			try {
+				throw new RuntimeException();
+			} catch (Throwable t) {
+				throw new RuntimeException(t);
+			}
+		} catch (Throwable t) {
+			formatted = formatterWithPackage.format(t, NO_DETAIL,
+					NO_CUSTOM_DATA);
+			assertThat(
+					formatted.causes.size(),
+					is(1));
+		}
+	}
+
+	@Test
+	public void nestedExceptionsUsesTheRootCauseAsTheToplevel() {
+		FormattedException formatted;
+		ExceptionFormatter formatterWithPackage = new ExceptionFormatter(
+				"com.yellerapp");
+		try {
+			try {
+				throw new RuntimeException("root");
+			} catch (Throwable t) {
+				throw new RuntimeException("child", t);
+			}
+		} catch (Throwable t) {
+			formatted = formatterWithPackage.format(t, NO_DETAIL,
+					NO_CUSTOM_DATA);
+			assertThat(
+					formatted.message,
+					is("root"));
+		}
+	}
 }

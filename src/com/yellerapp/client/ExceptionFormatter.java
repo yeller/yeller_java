@@ -3,11 +3,7 @@ package com.yellerapp.client;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 public class ExceptionFormatter {
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(
@@ -22,14 +18,15 @@ public class ExceptionFormatter {
 	public FormattedException format(Throwable t, YellerExtraDetail detail,
 			Map<String, Object> custom) {
 		FormattedException e = new FormattedException();
-		e.type = t.getClass().getSimpleName();
-		e.message = t.getMessage();
-		if (e.message != null) {
-			e.message = e.message.substring(0,
-					Math.min(1000, e.message.length()));
-		}
 
-		e.stackTrace = formatStackTrace(t.getStackTrace());
+		List<FormattedException.Cause> causes = extractCauses(t);
+		FormattedException.Cause rootCause = causes.get(0);
+		causes.remove(rootCause);
+		e.type = rootCause.type;
+		e.message = rootCause.message;
+		e.stackTrace = rootCause.stackTrace;
+		e.causes = causes;
+
 		try {
 			e.host = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException u) {
@@ -49,6 +46,28 @@ public class ExceptionFormatter {
             e.clientVersion = Version.VERSION;
         }
 		return e;
+	}
+
+	private List<FormattedException.Cause> extractCauses(Throwable t) {
+		ArrayList<FormattedException.Cause> result = new ArrayList<FormattedException.Cause>();
+		result.add(throwableToCause(t));
+		Throwable cause = t.getCause();
+		while (cause != null) {
+			FormattedException.Cause e = throwableToCause(cause);
+			result.add(e);
+			cause = cause.getCause();
+		}
+		Collections.reverse(result);
+		return result;
+	}
+
+	private FormattedException.Cause throwableToCause(Throwable t) {
+		String message = t.getMessage();
+		if (message != null) {
+			message = message.substring(0,
+					Math.min(1000, message.length()));
+		}
+		return new FormattedException.Cause(t.getClass().getSimpleName(), message, formatStackTrace(t.getStackTrace()));
 	}
 
 	private String formatDate(Date date) {
