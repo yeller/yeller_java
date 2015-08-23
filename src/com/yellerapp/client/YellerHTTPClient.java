@@ -26,7 +26,8 @@ public class YellerHTTPClient implements YellerClient,
 	private HTTPClient http = new ApacheHTTPClient(new ObjectMapper());
 
 	private ExceptionFormatter formatter = new ExceptionFormatter(new String[0]);
-	private ObjectMapper mapper = null;
+	private ObjectMapper mapper = new ObjectMapper();
+	private boolean debug = false;
 
 	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
@@ -68,28 +69,6 @@ public class YellerHTTPClient implements YellerClient,
 		return this;
 	}
 
-	protected void resetHTTPClient() throws Exception {
-		if (Arrays.deepEquals(this.urls, DEFAULT_URLS)) {
-			this.http = new ApacheYellerAppSSLHTTPClient(this.mapper());
-		} else {
-			this.http = new ApacheHTTPClient(this.mapper());
-		}
-		this.resetReporter();
-	}
-
-	protected ObjectMapper mapper() {
-		if (this.mapper == null) {
-			return new ObjectMapper();
-		} else {
-			return this.mapper;
-		}
-	}
-
-	protected void resetReporter() {
-		this.reporter = new Reporter(this.apiKey, this.urls, this.http,
-				this.errorHandler);
-	}
-
 	public YellerHTTPClient withObjectMapper(ObjectMapper mapper) throws Exception {
 		this.mapper = mapper;
 		this.resetHTTPClient();
@@ -97,8 +76,14 @@ public class YellerHTTPClient implements YellerClient,
 	}
 
 	public YellerHTTPClient enableDebug() {
-		this.reporter = new Reporter(apiKey, urls, http, errorHandler,
-				new Debug());
+		this.debug = true;
+		this.resetReporter();
+		return this;
+	}
+
+	public YellerHTTPClient disableDebug() {
+		this.debug = false;
+		this.resetReporter();
 		return this;
 	}
 
@@ -125,5 +110,24 @@ public class YellerHTTPClient implements YellerClient,
 	public YellerClient setApplicationPackages(String... applicationPackages) {
 		this.formatter = new ExceptionFormatter(applicationPackages);
 		return this;
+	}
+
+	protected void resetHTTPClient() throws Exception {
+		if (Arrays.deepEquals(this.urls, DEFAULT_URLS)) {
+			this.http = new ApacheYellerAppSSLHTTPClient(this.mapper);
+		} else {
+			this.http = new ApacheHTTPClient(this.mapper);
+		}
+		this.resetReporter();
+	}
+
+	protected void resetReporter() {
+		if (this.debug) {
+			this.reporter = new Reporter(this.apiKey, this.urls, this.http,
+					this.errorHandler, new Debug());
+		} else {
+			this.reporter = new Reporter(this.apiKey, this.urls, this.http,
+					this.errorHandler);
+		}
 	}
 }
