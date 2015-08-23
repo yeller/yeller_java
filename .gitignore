@@ -4,3 +4,5 @@ pom.xml
 .settings/
 .project
 .classpath
+.idea
+yeller_java_api.iml
