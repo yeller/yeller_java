@@ -1,5 +1,8 @@
 package com.yellerapp.client;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class Reporter {
 
 	private final String apiKey;
@@ -31,7 +34,7 @@ public class Reporter {
 		if (exception.applicationEnvironment != null
 				&& (exception.applicationEnvironment.equals("test") || exception.applicationEnvironment
 						.equals("development"))) {
-			// ignore
+			this.debugLog("INFO ignoring-error-due-do-development-environment environment=" + exception.applicationEnvironment);
 		} else {
 			report(exception, 0, null);
 		}
@@ -43,6 +46,13 @@ public class Reporter {
         }
     }
 
+	protected String throwableToString(Throwable t) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		return sw.toString();
+	}
+
 	protected void report(FormattedException exception, int retryCount, Exception previousException) {
 		if (retryCount > (2 * urls.length)) {
             this.debugLog("ERROR ran-out-of-retries retry-count=" + retryCount + " last-error=" + previousException.toString());
@@ -50,9 +60,10 @@ public class Reporter {
 			return;
 		} else {
 			try {
-                this.debugLog("POST to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
+                this.debugLog("POST at=begin to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
 				http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
 						exception);
+				this.debugLog("POST at=success to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
 				this.cycleBackend();
 			} catch (AuthorizationException e) {
 				this.handler.reportAuthError(this.urls[this.currentBackend], e);

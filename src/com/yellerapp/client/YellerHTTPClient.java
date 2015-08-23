@@ -88,7 +88,8 @@ public class YellerHTTPClient implements YellerClient,
 	}
 
 	public YellerHTTPClient setErrorHandler(YellerErrorHandler handler) {
-		this.reporter = new Reporter(apiKey, this.urls, http, handler);
+		this.errorHandler = handler;
+		this.resetReporter();
 		return this;
 	}
 

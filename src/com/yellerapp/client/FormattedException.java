@@ -75,7 +75,7 @@ public class FormattedException {
 		public String message;
 
 		@JsonSerialize
-		@JsonProperty("causes")
+		@JsonProperty("stacktrace")
 		public ArrayList<ArrayList<Object>> stackTrace;
 
 		public Cause(String type, String message, ArrayList<ArrayList<Object>> stackTrace) {
