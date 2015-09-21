@@ -7,7 +7,7 @@ Yeller, letting you diagnose bugs in your running app.
 ## Adding to your project
 
 yeller-java is distributed via maven. Assuming your build system is maven
-compatible, you can add the following xml snippet to your pom file to import
+compatible, you can add the following xml snippets to your pom file to import
 it:
 
 ```xml
@@ -18,6 +18,15 @@ it:
 </dependency>
 ```
 
+```xml
+<repositories>
+  <repository>
+    <id>clojars.org</id>
+    <url>http://clojars.org/repo</url>
+  </repository>
+</repositories>
+```
+
 ## Integrating
 
 Once you've got the jar installed, you'll need to get running with a Yeller
@@ -26,7 +35,7 @@ can find on your project's setting screen). Once you have the api key,
 you instantiate a client with it thusly:
 
 ```java
-YellerClient yellerClient = new YellerClient('YOUR_API_KEY_HERE');
+YellerClient yellerClient = new YellerHTTPClient('YOUR_API_KEY_HERE');
 ```
 
 To report an exception, simply pass it into ```java yellerClient.report```.
