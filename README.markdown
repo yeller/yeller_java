@@ -35,7 +35,7 @@ can find on your project's setting screen). Once you have the api key,
 you instantiate a client with it thusly:
 
 ```java
-YellerClient yellerClient = new YellerHTTPClient('YOUR_API_KEY_HERE');
+YellerClient yellerClient = new YellerHTTPClient("YOUR_API_KEY_HERE");
 ```
 
 To report an exception, simply pass it into ```java yellerClient.report```.
