@@ -1,4 +1,4 @@
-(defproject yeller-java-api "1.3.1"
+(defproject yeller-java-api "1.4.0"
   :description "java client for yellerapp.com's exception tracking api"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
