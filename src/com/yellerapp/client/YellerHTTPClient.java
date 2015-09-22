@@ -29,6 +29,7 @@ public class YellerHTTPClient implements YellerClient,
 	private ExceptionFormatter formatter = new ExceptionFormatter(applicationPackages);
 	private ObjectMapper mapper = new ObjectMapper();
 	private boolean debug = false;
+	private String environment;
 
 	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
@@ -46,21 +47,38 @@ public class YellerHTTPClient implements YellerClient,
 
 	public void report(Throwable t, Map<String, Object> custom) {
 		FormattedException formattedException = formatter.format(t,
-				NO_EXTRA_DETAIL, custom);
+				formatExtraDetail(), custom);
 		reporter.report(formattedException);
 	}
 
 	public void report(Throwable t, YellerExtraDetail extraDetail,
 			Map<String, Object> custom) {
 		FormattedException formattedException = formatter.format(t,
-				extraDetail, custom);
+				formatExtraDetail(extraDetail), custom);
 		reporter.report(formattedException);
 	}
 
 	public void report(Throwable t, YellerExtraDetail extraDetail) {
 		FormattedException formattedException = formatter.format(t,
-				extraDetail, NO_CUSTOM_DATA);
+				formatExtraDetail(extraDetail), NO_CUSTOM_DATA);
 		reporter.report(formattedException);
+	}
+
+	private YellerExtraDetail formatExtraDetail() {
+		return formatExtraDetail(NO_EXTRA_DETAIL);
+	}
+
+	private YellerExtraDetail formatExtraDetail(YellerExtraDetail detail) {
+		if (this.environment != "production" && detail.applicationEnvironment.equals("production")) {
+			return detail.withApplicationEnvironment(environment);
+		} else {
+			return detail;
+		}
+	}
+
+	public YellerHTTPClient withEnvironment(String environment) {
+		this.environment = environment;
+		return this;
 	}
 
 	public YellerHTTPClient setUrls(String... urls) throws Exception {
