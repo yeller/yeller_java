@@ -156,4 +156,14 @@ public class YellerHTTPClient implements YellerClient,
 					this.errorHandler);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "YellerHTTPClient{" +
+				"apiKey='" + apiKey + '\'' +
+				", errorHandler=" + errorHandler +
+				", applicationPackages=" + Arrays.toString(applicationPackages) +
+				", environment='" + environment + '\'' +
+				'}';
+	}
 }
