@@ -25,7 +25,8 @@ public class YellerHTTPClient implements YellerClient,
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
 	private HTTPClient http = new ApacheHTTPClient(new ObjectMapper());
 
-	private ExceptionFormatter formatter = new ExceptionFormatter(new String[0]);
+	private String[] applicationPackages = new String[0];
+	private ExceptionFormatter formatter = new ExceptionFormatter(applicationPackages);
 	private ObjectMapper mapper = new ObjectMapper();
 	private boolean debug = false;
 
@@ -109,6 +110,12 @@ public class YellerHTTPClient implements YellerClient,
 	}
 
 	public YellerClient setApplicationPackages(String... applicationPackages) {
+		this.applicationPackages = applicationPackages;
+		resetFormatter();
+		return this;
+	}
+
+	public YellerClient resetFormatter() {
 		this.formatter = new ExceptionFormatter(applicationPackages);
 		return this;
 	}
