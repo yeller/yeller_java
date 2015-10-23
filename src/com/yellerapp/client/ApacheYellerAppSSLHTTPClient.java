@@ -9,6 +9,7 @@ import java.security.cert.CertificateFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -25,6 +26,7 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 	private static final String CERTIFICATE_PATH = "/ca.crt";
 	private static final int CONNECTION_MAX_LIMIT = 64;
 	private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
+	public static final String YELLER_FINGERPRINT_HEADER_NAME = "X-Yeller-Fingerprint";
 	private final HttpClient http;
 	private final ObjectMapper mapper;
 	private PoolingHttpClientConnectionManager connectionManager;
@@ -35,7 +37,7 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 		this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 	}
 
-	public void post(String url, FormattedException exception)
+	public SuccessResponse post(String url, FormattedException exception)
 			throws IOException, AuthorizationException {
 		HttpPost post = new HttpPost(url);
 		try {
@@ -45,6 +47,7 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 			if (response.getStatusLine().getStatusCode() == 401) {
 				throw new AuthorizationException("API key was invalid.");
 			}
+			return ApacheHTTPClient.httpResponseToYellerResponse(response);
 		} finally {
 			post.releaseConnection();
 		}

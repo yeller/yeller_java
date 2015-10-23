@@ -94,12 +94,13 @@ public class FakeServer {
 			};
 			HashMap<String, Object> o = mapper.readValue(requestBody, typeRef);
 			receivedExceptions.add(o);
+			http.getResponseHeaders().add("X-Yeller-Fingerprint", "dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8");
+			http.getResponseHeaders().add("X-Yeller-URL", "https://app.yellerapp.com/rails/rails/dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8");
 			http.sendResponseHeaders(200, "success".length());
 			OutputStream os = http.getResponseBody();
 			os.write("success".getBytes());
 			http.close();
 		}
-
 	}
 
 	public void stop() {

@@ -61,9 +61,9 @@ public class Reporter {
 		} else {
 			try {
                 this.debugLog("POST at=begin to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
-				http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
+				SuccessResponse response = http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
 						exception);
-				this.debugLog("POST at=success to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
+				this.debugLog("POST at=success url= " + response.url + " to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
 				this.cycleBackend();
 			} catch (AuthorizationException e) {
 				this.handler.reportAuthError(this.urls[this.currentBackend], e);

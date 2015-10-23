@@ -2,19 +2,16 @@ package com.yellerapp.test.unit;
 
 import java.io.IOException;
 
+import com.yellerapp.client.*;
 import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.yellerapp.client.AuthorizationException;
-import com.yellerapp.client.FormattedException;
-import com.yellerapp.client.HTTPClient;
-import com.yellerapp.client.Reporter;
-import com.yellerapp.client.YellerErrorHandler;
-
 public class YellerReporterTest {
+	public static final SuccessResponse FAKE_YELLER_RESPONSE = new SuccessResponse("dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8",
+			"https://app.yellerapp.com/rails/rails/dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8");
 	@Rule
 	public JUnitRuleMockery mockery = new JUnitRuleMockery();
 	protected YellerErrorHandler errorHandler = mockery.mock(YellerErrorHandler.class);
@@ -27,6 +24,7 @@ public class YellerReporterTest {
 		mockery.checking(new Expectations() {
 			{
 				oneOf(http).post("http://api1.yellerapp.com/api-key-here", exception);
+				will(returnValue(FAKE_YELLER_RESPONSE));
 			}
 		});
 		reporter.report(exception);
@@ -40,7 +38,9 @@ public class YellerReporterTest {
 		mockery.checking(new Expectations() {
 			{
 				oneOf(http).post("http://api1.yellerapp.com/api-key-here", exception);
+				will(returnValue(FAKE_YELLER_RESPONSE));
 				oneOf(http).post("http://api2.yellerapp.com/api-key-here", exception);
+				will(returnValue(FAKE_YELLER_RESPONSE));
 			}
 		});
 		reporter.report(exception);
@@ -57,6 +57,7 @@ public class YellerReporterTest {
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
 				will(throwException(new IOException()));
 				oneOf(http).post("http://api2.yellerapp.com/api-key-here", exception);
+				will(returnValue(FAKE_YELLER_RESPONSE));
 				allowing(errorHandler).reportIOError(with(Matchers.any(String.class)), with(Matchers.any(Throwable.class)));
 			}
 		});
@@ -73,6 +74,7 @@ public class YellerReporterTest {
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
 				will(throwException(new IOException()));
 				allowing(http).post(with(Matchers.any(String.class)), with(Matchers.any(FormattedException.class)));
+				will(returnValue(FAKE_YELLER_RESPONSE));
 				oneOf(errorHandler).reportIOError(with(Matchers.is("http://api1.yellerapp.com")), with(Matchers.any(IOException.class)));
 			}
 		});
