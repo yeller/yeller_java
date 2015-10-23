@@ -9,7 +9,6 @@ import java.security.cert.CertificateFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -94,5 +93,4 @@ public class ApacheYellerAppSSLHTTPClient implements HTTPClient {
 			throws JsonProcessingException {
 		return this.mapper.writeValueAsString(exception);
 	}
-
 }
