@@ -45,6 +45,7 @@ public class ExceptionFormatter {
         } else {
             e.clientVersion = Version.VERSION;
         }
+		e.originalError = t;
 		return e;
 	}
 

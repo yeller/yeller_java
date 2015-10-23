@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -47,6 +48,9 @@ public class FormattedException {
 	@JsonSerialize
 	@JsonProperty("causes")
 	public List<Cause> causes;
+
+	@JsonIgnore
+	public Throwable originalError;
 
 	@Override
 	public String toString() {

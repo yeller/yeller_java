@@ -10,17 +10,23 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public class YellerReporterTest {
-	public static final SuccessResponse FAKE_YELLER_RESPONSE = new SuccessResponse("dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8",
+	public static class IgnoringSuccessHandler implements YellerSuccessHandler {
+		public void errorSent(YellerSuccessResponse response) {
+		}
+	}
+
+	public static final YellerSuccessResponse FAKE_YELLER_RESPONSE = new YellerSuccessResponse("dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8",
 			"https://app.yellerapp.com/rails/rails/dad2c5896777a2077e66700f0c2eb64a49f5af851ea00aca922e6d344b209cf8");
 	@Rule
 	public JUnitRuleMockery mockery = new JUnitRuleMockery();
 	protected YellerErrorHandler errorHandler = mockery.mock(YellerErrorHandler.class);
+	protected YellerSuccessHandler successHandler = new IgnoringSuccessHandler();
 
 	@Test
 	public void itSendsExceptionsToASingleBackend() throws IOException, AuthorizationException {
 		final HTTPClient http = mockery.mock(HTTPClient.class);
 		final FormattedException exception = new FormattedException();
-		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com" }, http, errorHandler);
+		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com" }, http, errorHandler, successHandler, null);
 		mockery.checking(new Expectations() {
 			{
 				oneOf(http).post("http://api1.yellerapp.com/api-key-here", exception);
@@ -34,7 +40,7 @@ public class YellerReporterTest {
 	public void itRoundRobinsBetweenBackends() throws IOException, AuthorizationException {
 		final HTTPClient http = mockery.mock(HTTPClient.class);
 		final FormattedException exception = new FormattedException();
-		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler);
+		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler, successHandler, null);
 		mockery.checking(new Expectations() {
 			{
 				oneOf(http).post("http://api1.yellerapp.com/api-key-here", exception);
@@ -51,7 +57,7 @@ public class YellerReporterTest {
 	public void itRetriesWithADifferentBackendWhenAnExceptionIsThrown() throws IOException, AuthorizationException {
 		final HTTPClient http = mockery.mock(HTTPClient.class);
 		final FormattedException exception = new FormattedException();
-		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler);
+		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler, successHandler, null);
 		mockery.checking(new Expectations() {
 			{
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
@@ -68,7 +74,7 @@ public class YellerReporterTest {
 	public void itReportsIOExceptionsToTheErrorHandler() throws IOException, AuthorizationException {
 		final HTTPClient http = mockery.mock(HTTPClient.class);
 		final FormattedException exception = new FormattedException();
-		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler);
+		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler, successHandler, null);
 		mockery.checking(new Expectations() {
 			{
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);
@@ -85,7 +91,7 @@ public class YellerReporterTest {
 	public void itReportsAuthorizationExceptions() throws IOException, AuthorizationException {
 		final HTTPClient http = mockery.mock(HTTPClient.class);
 		final FormattedException exception = new FormattedException();
-		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler);
+		final Reporter reporter = new Reporter("api-key-here", new String[] { "http://api1.yellerapp.com", "http://api2.yellerapp.com" }, http, errorHandler, successHandler, null);
 		mockery.checking(new Expectations() {
 			{
 				allowing(http).post("http://api1.yellerapp.com/api-key-here", exception);

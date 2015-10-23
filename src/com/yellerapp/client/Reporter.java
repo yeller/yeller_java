@@ -11,23 +11,16 @@ public class Reporter {
 	private int currentBackend = 0;
 	private YellerErrorHandler handler;
     private Debug debug;
+	private final YellerSuccessHandler successHandler;
 
 	public Reporter(String apiKey, String[] urls, HTTPClient http,
-			YellerErrorHandler handler) {
-		this.apiKey = apiKey;
-		this.urls = urls;
-		this.http = http;
-		this.handler = handler;
-        this.debug = null;
-	}
-
-	public Reporter(String apiKey, String[] urls, HTTPClient http,
-			YellerErrorHandler handler, Debug debug) {
+			YellerErrorHandler handler, YellerSuccessHandler successHandler, Debug debug) {
 		this.apiKey = apiKey;
 		this.urls = urls;
 		this.http = http;
 		this.handler = handler;
         this.debug = debug;
+		this.successHandler = successHandler;
 	}
 
 	public void report(FormattedException exception) {
@@ -61,9 +54,10 @@ public class Reporter {
 		} else {
 			try {
                 this.debugLog("POST at=begin to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
-				SuccessResponse response = http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
+				YellerSuccessResponse response = http.post(this.urls[this.currentBackend] + "/" + this.apiKey,
 						exception);
-				this.debugLog("POST at=success url= " + response.url + " to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
+				this.debugLog("POST at=success url=" + response.url + " to=" + this.urls[this.currentBackend] + "/" + this.apiKey + " retry-count=" + retryCount);
+				this.successHandler.errorSent(response);
 				this.cycleBackend();
 			} catch (AuthorizationException e) {
 				this.handler.reportAuthError(this.urls[this.currentBackend], e);

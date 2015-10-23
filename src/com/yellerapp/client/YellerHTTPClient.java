@@ -19,11 +19,12 @@ public class YellerHTTPClient implements YellerClient,
 			"https://collector5.yellerapp.com" };
 
 	private final String apiKey;
+	private YellerSuccessHandler successHandler = new STDOUTSuccessHandler();
 	private Reporter reporter;
 
 	private String[] urls = DEFAULT_URLS;
 	private YellerErrorHandler errorHandler = new STDERRErrorHandler();
-	private HTTPClient http = new ApacheHTTPClient(new ObjectMapper());
+	private HTTPClient http = ApacheHTTPClient.fromObjectMapper(new ObjectMapper());
 
 	private String[] applicationPackages = new String[0];
 	private ExceptionFormatter formatter = new ExceptionFormatter(applicationPackages);
@@ -33,7 +34,6 @@ public class YellerHTTPClient implements YellerClient,
 
 	public YellerHTTPClient(String apiKey) throws Exception {
 		this.apiKey = apiKey;
-		this.reporter = new Reporter(apiKey, DEFAULT_URLS, http, errorHandler);
 		this.resetHTTPClient();
 	}
 
@@ -82,7 +82,6 @@ public class YellerHTTPClient implements YellerClient,
 	}
 
 	public YellerHTTPClient setUrls(String... urls) throws Exception {
-		this.reporter = new Reporter(apiKey, urls, http, errorHandler);
 		this.urls = urls;
 		this.resetHTTPClient();
 		return this;
@@ -138,11 +137,17 @@ public class YellerHTTPClient implements YellerClient,
 		return this;
 	}
 
+	public YellerClient setSuccessHandler(YellerSuccessHandler successHandler) {
+		this.successHandler = successHandler;
+		this.resetReporter();
+		return this;
+	}
+
 	protected void resetHTTPClient() throws Exception {
 		if (Arrays.deepEquals(this.urls, DEFAULT_URLS)) {
-			this.http = new ApacheYellerAppSSLHTTPClient(this.mapper);
+			this.http = ApacheYellerAppSSLHTTPClient.fromObjectMapper(this.mapper);
 		} else {
-			this.http = new ApacheHTTPClient(this.mapper);
+			this.http = ApacheHTTPClient.fromObjectMapper(this.mapper);
 		}
 		this.resetReporter();
 	}
@@ -150,10 +155,10 @@ public class YellerHTTPClient implements YellerClient,
 	protected void resetReporter() {
 		if (this.debug) {
 			this.reporter = new Reporter(this.apiKey, this.urls, this.http,
-					this.errorHandler, new Debug());
+					this.errorHandler, this.successHandler, new Debug());
 		} else {
 			this.reporter = new Reporter(this.apiKey, this.urls, this.http,
-					this.errorHandler);
+					this.errorHandler, this.successHandler, null);
 		}
 	}
 
